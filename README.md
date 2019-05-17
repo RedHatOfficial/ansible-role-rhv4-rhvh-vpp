@@ -2,7 +2,7 @@ VPP - Protection Profile for Virtualization v. 1.0 for Red Hat Virtualization Hy
 =========
 
 [![Build Status](https://travis-ci.org/RedHatOfficial/ansible-role-rhv4-rhvh-vpp.svg?branch=master)](https://travis-ci.org/RedHatOfficial/ansible-role-rhv4-rhvh-vpp)
-[![Ansible Role](https://img.shields.io/ansible/role/40487.svg)](https://galaxy.ansible.com/RedHatOfficial/rhv4-rhvh-vpp)
+[![Ansible Role](https://img.shields.io/ansible/role/40487.svg)](https://galaxy.ansible.com/RedHatOfficial/rhv4_rhvh_vpp)
 [![GitHub release](https://img.shields.io/github/release/RedHatOfficial/ansible-role-rhv4-rhvh-vpp.svg)](https://github.com/RedHatOfficial/ansible-role-rhv4-rhvh-vpp/releases/latest)
 
 Ansible Role for VPP - Protection Profile for Virtualization v. 1.0 for Red Hat Virtualization Hypervisor (RHVH)  
