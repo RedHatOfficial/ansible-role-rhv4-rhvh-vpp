@@ -1,6 +1,28 @@
 ---
 # defaults file for rhv4_rhvh_vpp
 
+sshd_approved_macs: true
+sshd_idle_timeout_value: true
+var_account_disable_post_pw_expiration: true
+var_accounts_maximum_age_login_defs: true
+var_accounts_minimum_age_login_defs: true
+var_accounts_passwords_pam_faillock_deny: true
+var_accounts_passwords_pam_faillock_fail_interval: true
+var_accounts_passwords_pam_faillock_unlock_time: true
+var_fips_mode: true
+var_password_pam_dcredit: true
+var_password_pam_difok: true
+var_password_pam_lcredit: true
+var_password_pam_maxclassrepeat: true
+var_password_pam_maxrepeat: true
+var_password_pam_minlen: true
+var_password_pam_ocredit: true
+var_password_pam_ucredit: true
+var_password_pam_unix_remember: true
+var_selinux_policy_name: true
+var_selinux_state: true
+var_smartcard_drivers: true
+var_sshd_set_keepalive: true
 account_disable_post_pw_expiration: true
 accounts_maximum_age_login_defs: true
 accounts_minimum_age_login_defs: true
@@ -88,7 +110,9 @@ ensure_redhat_gpgkey_installed: true
 file_permissions_sshd_private_key: true
 file_permissions_sshd_pub_key: true
 force_opensc_card_drivers: true
+grub2_audit_argument: true
 grub2_disable_interactive_boot: true
+grub2_enable_fips_mode: true
 grub2_enable_selinux: true
 high_complexity: true
 high_severity: true
@@ -104,6 +128,7 @@ no_empty_passwords: true
 no_reboot_needed: true
 package_opensc_installed: true
 reboot_required: true
+require_singleuser_auth: true
 restrict_serial_port_logins: true
 restrict_strategy: true
 rpm_verify_hashes: true
