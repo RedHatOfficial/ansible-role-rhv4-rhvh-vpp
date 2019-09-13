@@ -1,7 +1,7 @@
 galaxy_info:
   role_name: rhv4_rhvh_vpp
   author: ComplianceAsCode development team
-  description: VPP - Protection Profile for Virtualization v. 1.0 for Red Hat Virtualization Hypervisor (RHVH)
+  description: VPP - Protection Profile for Virtualization v. 1.0 for Red Hat Virtualization Host (RHVH)
   company: Red Hat, Inc.
 
   issue_tracker_url: https://github.com/ComplianceAsCode/content/issues
