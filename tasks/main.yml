@@ -1,849 +1,3 @@
-- name: Disable Compression Or Set Compression to delayed
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*Compression\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: Compression delayed
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - sshd_disable_compression | bool
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_disable_compression
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-CM-6(b)
-  - NIST-800-171-3.1.12
-
-- name: Rule title of sshd_disable_kerb_auth
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*KerberosAuthentication\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: KerberosAuthentication no
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - sshd_disable_kerb_auth | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_disable_kerb_auth
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-CM-6(c)
-  - NIST-800-171-3.1.12
-
-- name: Rule title of sshd_disable_root_login
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*PermitRootLogin\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: PermitRootLogin no
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - sshd_disable_root_login | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_disable_root_login
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-3
-  - NIST-800-53-AC-6(2)
-  - NIST-800-53-AC-17(b)
-  - NIST-800-53-IA-2
-  - NIST-800-53-IA-2(5)
-  - NIST-800-171-3.1.1
-  - NIST-800-171-3.1.5
-  - CJIS-5.5.6
-
-- name: Rule title of disable_host_auth
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*HostbasedAuthentication\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: HostbasedAuthentication no
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - disable_host_auth | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - disable_host_auth
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-3
-  - NIST-800-53-AC-17
-  - NIST-800-53-CM-6(b)
-  - NIST-800-171-3.1.12
-  - CJIS-5.5.6
-
-- name: Set SSH Idle Timeout Interval
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*ClientAliveInterval\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: ClientAliveInterval {{ sshd_idle_timeout_value }}
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - sshd_set_idle_timeout | bool
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_set_idle_timeout
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-2(5)
-  - NIST-800-53-SA-8(i)
-  - NIST-800-53-AC-12
-  - NIST-800-53-AC-17(b)
-  - NIST-800-53-SC-10
-  - NIST-800-171-3.1.11
-  - PCI-DSS-Req-8.1.8
-  - CJIS-5.5.6
-
-- name: Rule title of sshd_enable_strictmodes
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*StrictModes\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: StrictModes yes
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - sshd_enable_strictmodes | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_enable_strictmodes
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-6
-  - NIST-800-53-AC-17(b)
-  - NIST-800-171-3.1.12
-
-- name: Rule title of sshd_disable_gssapi_auth
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*GSSAPIAuthentication\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: GSSAPIAuthentication no
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - sshd_disable_gssapi_auth | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_disable_gssapi_auth
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-17(b)
-  - NIST-800-53-CM-6(c)
-  - NIST-800-171-3.1.12
-
-- name: Rule title of sshd_use_priv_separation
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*UsePrivilegeSeparation\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: UsePrivilegeSeparation sandbox
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - sshd_use_priv_separation | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_use_priv_separation
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-6
-  - NIST-800-53-AC-17(b)
-  - NIST-800-171-3.1.12
-
-- name: Use Only FIPS 140-2 Validated MACs
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*MACs\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: MACs {{ sshd_approved_macs }}
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - sshd_use_approved_macs | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_use_approved_macs
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-17(b)
-  - NIST-800-53-AC-17(2)
-  - NIST-800-53-IA-7
-  - NIST-800-53-SC-13
-  - NIST-800-53-MA-4(6)
-  - NIST-800-171-3.1.13
-  - NIST-800-171-3.13.11
-  - NIST-800-171-3.13.8
-
-- name: Rule title of sshd_allow_only_protocol2
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*Protocol\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: Protocol 2
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - high_severity | bool
-  - sshd_allow_only_protocol2 | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_allow_only_protocol2
-  - high_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-17(b)
-  - NIST-800-53-AC-17(8).1(ii)
-  - NIST-800-53-IA-5(1)(c)
-  - NIST-800-171-3.1.13
-  - NIST-800-171-3.5.4
-  - CJIS-5.5.6
-
-- name: Use Only FIPS 140-2 Validated Ciphers
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*Ciphers\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - sshd_use_approved_ciphers | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_use_approved_ciphers
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-3
-  - NIST-800-53-AC-17(b)
-  - NIST-800-53-AC-17(2)
-  - NIST-800-53-AU-10(5)
-  - NIST-800-53-CM-6(b)
-  - NIST-800-53-IA-5(1)(c)
-  - NIST-800-53-IA-7
-  - NIST-800-53-SI-7
-  - NIST-800-53-SC-13
-  - NIST-800-171-3.1.13
-  - NIST-800-171-3.13.11
-  - NIST-800-171-3.13.8
-  - CJIS-5.5.6
-
-- name: Rule title of sshd_disable_empty_passwords
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*PermitEmptyPasswords\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: PermitEmptyPasswords no
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - sshd_disable_empty_passwords | bool
-  - high_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_disable_empty_passwords
-  - high_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-3
-  - NIST-800-53-AC-6
-  - NIST-800-53-AC-17(b)
-  - NIST-800-53-CM-6(b)
-  - NIST-800-171-3.1.1
-  - NIST-800-171-3.1.5
-  - CJIS-5.5.6
-
-- name: Rule title of sshd_do_not_permit_user_env
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*PermitUserEnvironment\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: PermitUserEnvironment yes
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - sshd_do_not_permit_user_env | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_do_not_permit_user_env
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-17(b)
-  - NIST-800-53-CM-6(b)
-  - NIST-800-171-3.1.12
-  - CJIS-5.5.6
-
-- name: Rule title of sshd_set_loglevel_info
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*LogLevel\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: LogLevel INFO
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - low_severity | bool
-  - sshd_set_loglevel_info | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_set_loglevel_info
-  - low_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-17(b)
-
-- name: Set SSH Client Alive Max Count
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*ClientAliveCountMax\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: ClientAliveCountMax {{ var_sshd_set_keepalive }}
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - sshd_set_keepalive | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_set_keepalive
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-2(5)
-  - NIST-800-53-SA-8
-  - NIST-800-53-AC-12
-  - NIST-800-53-AC-17(b)
-  - NIST-800-53-SC-10
-  - NIST-800-171-3.1.11
-  - CJIS-5.5.6
-
-- name: Rule title of sshd_print_last_log
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*PrintLastLog\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: PrintLastLog yes
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - sshd_print_last_log | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_print_last_log
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-9
-  - NIST-800-53-AC-17(b)
-
-- name: Rule title of sshd_enable_warning_banner
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*Banner\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: Banner /etc/issue
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - sshd_enable_warning_banner | bool
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_enable_warning_banner
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-8(a)
-  - NIST-800-53-AC-8(b)
-  - NIST-800-53-AC-8(c)(1)
-  - NIST-800-53-AC-8(c)(2)
-  - NIST-800-53-AC-8(c)(3)
-  - NIST-800-53-AC-17(b)
-  - NIST-800-171-3.1.9
-  - CJIS-5.5.6
-
-- name: Disable SSH Support for Rhosts RSA Authentication
-  block:
-  - name: Deduplicate values from /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: false
-      regexp: (?i)^\s*RhostsRSAAuthentication\s+
-      state: absent
-  - name: Insert correct line to /etc/ssh/sshd_config
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      create: true
-      line: RhostsRSAAuthentication no
-      state: present
-      insertbefore: ^Match
-      validate: /usr/sbin/sshd -t -f %s
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - sshd_disable_rhosts_rsa | bool
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sshd_disable_rhosts_rsa
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-CM-6(a)
-  - NIST-800-53-AC-17(b)
-  - NIST-800-171-3.1.12
-
-- name: Find /etc/ssh file(s)
-  find:
-    paths: /etc/ssh
-    patterns: ^.*_key$
-    use_regex: true
-  register: files_found
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - configure_strategy | bool
-  - medium_severity | bool
-  - file_permissions_sshd_private_key | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - file_permissions_sshd_private_key
-  - medium_severity
-  - configure_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-6
-  - NIST-800-53-AC-17
-  - NIST-800-171-3.1.13
-  - NIST-800-171-3.13.10
-
-- name: Set permissions for /etc/ssh file(s)
-  file:
-    path: '{{ item.path }}'
-    mode: '0640'
-  with_items:
-  - '{{ files_found.files }}'
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - configure_strategy | bool
-  - medium_severity | bool
-  - file_permissions_sshd_private_key | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - file_permissions_sshd_private_key
-  - medium_severity
-  - configure_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-6
-  - NIST-800-53-AC-17
-  - NIST-800-171-3.1.13
-  - NIST-800-171-3.13.10
-
-- name: Find /etc/ssh file(s)
-  find:
-    paths: /etc/ssh
-    patterns: ^.*.pub$
-    use_regex: true
-  register: files_found
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - configure_strategy | bool
-  - file_permissions_sshd_pub_key | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - file_permissions_sshd_pub_key
-  - medium_severity
-  - configure_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-6
-  - NIST-800-171-3.1.13
-  - NIST-800-171-3.13.10
-
-- name: Set permissions for /etc/ssh file(s)
-  file:
-    path: '{{ item.path }}'
-    mode: '0644'
-  with_items:
-  - '{{ files_found.files }}'
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - configure_strategy | bool
-  - file_permissions_sshd_pub_key | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - file_permissions_sshd_pub_key
-  - medium_severity
-  - configure_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-AC-6
-  - NIST-800-171-3.1.13
-  - NIST-800-171-3.13.10
-
-- name: Test for domain group
-  command: grep '\s*\[domain\/[^]]*]' /etc/sssd/sssd.conf
-  register: test_grep_domain
-  ignore_errors: true
-  changed_when: false
-  tags:
-  - sssd_enable_smartcards
-  - medium_severity
-  - configure_strategy
-  - low_complexity
-  - medium_disruption
-  - no_reboot_needed
-  when:
-  - no_reboot_needed | bool
-  - configure_strategy | bool
-  - medium_severity | bool
-  - medium_disruption | bool
-  - sssd_enable_smartcards | bool
-  - low_complexity | bool
-
-- name: Add default domain group (if no domain there)
-  ini_file:
-    path: /etc/sssd/sssd.conf
-    section: '{{ item.section }}'
-    option: '{{ item.option }}'
-    value: '{{ item.value }}'
-    create: true
-    mode: 384
-  with_items:
-  - section: sssd
-    option: domains
-    value: default
-  - section: domain/default
-    option: id_provider
-    value: files
-  when:
-  - test_grep_domain.stdout is defined
-  - test_grep_domain.stdout | length < 1
-  - no_reboot_needed | bool
-  - configure_strategy | bool
-  - medium_severity | bool
-  - medium_disruption | bool
-  - sssd_enable_smartcards | bool
-  - low_complexity | bool
-  tags:
-  - sssd_enable_smartcards
-  - medium_severity
-  - configure_strategy
-  - low_complexity
-  - medium_disruption
-  - no_reboot_needed
-
-- name: Enable Smartcards in SSSD
-  ini_file:
-    dest: /etc/sssd/sssd.conf
-    section: pam
-    option: pam_cert_auth
-    value: true
-    create: true
-    mode: 384
-  tags:
-  - sssd_enable_smartcards
-  - medium_severity
-  - configure_strategy
-  - low_complexity
-  - medium_disruption
-  - no_reboot_needed
-  when:
-  - no_reboot_needed | bool
-  - configure_strategy | bool
-  - medium_severity | bool
-  - medium_disruption | bool
-  - sssd_enable_smartcards | bool
-  - low_complexity | bool
-
 - name: Ensure YUM Removes Previous Package Versions
   lineinfile:
     dest: /etc/yum.conf
@@ -1061,17 +215,39 @@
   - medium_disruption | bool
 
 - name: Read signatures in GPG key
-  shell: 'set -o pipefail
-
-    gpg --with-fingerprint --with-colons "/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release" | grep "^fpr" | cut -d ":" -f 10
-
-    '
+  command: gpg --with-fingerprint --with-colons "/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release"
   args:
     warn: false
-    executable: /bin/bash
   changed_when: false
   register: gpg_fingerprints
   check_mode: false
+  tags:
+  - ensure_redhat_gpgkey_installed
+  - high_severity
+  - restrict_strategy
+  - medium_complexity
+  - medium_disruption
+  - no_reboot_needed
+  - NIST-800-53-CM-5(3)
+  - NIST-800-53-CM-11(a)
+  - NIST-800-53-SI-7
+  - NIST-800-53-MA-1(b)
+  - NIST-800-171-3.4.8
+  - PCI-DSS-Req-6.2
+  - CJIS-5.10.4.1
+  when:
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - high_severity | bool
+  - ensure_redhat_gpgkey_installed | bool
+  - medium_complexity | bool
+  - medium_disruption | bool
+
+- name: Set Fact - Installed GPG Fingerprints
+  set_fact:
+    gpg_installed_fingerprints: '{{ gpg_fingerprints.stdout | regex_findall(''^pub.*
+
+      (?:^fpr[:]*)([0-9A-Fa-f]*)'', ''\1'') | list }}'
   tags:
   - ensure_redhat_gpgkey_installed
   - high_severity
@@ -1125,8 +301,8 @@
     key: /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
   when:
   - gpg_key_directory_permission.stat.mode <= '0755'
-  - ( gpg_fingerprints.stdout_lines | difference(gpg_valid_fingerprints)) | length == 0
-  - gpg_fingerprints.stdout_lines | length > 0
+  - (gpg_installed_fingerprints | difference(gpg_valid_fingerprints)) | length == 0
+  - gpg_installed_fingerprints | length > 0
   - ansible_distribution == "RedHat"
   - no_reboot_needed | bool
   - restrict_strategy | bool
@@ -1227,6 +403,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1239,7 +416,7 @@
     regexp: ^#?PRELINKING
     line: PRELINKING=no
   when:
-  - prelink_exists.stat.exists == True
+  - prelink_exists.stat.exists
   - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
   - high_complexity | bool
   - restrict_strategy | bool
@@ -1256,6 +433,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1265,7 +443,7 @@
 - name: revert prelinking binaries
   command: /usr/sbin/prelink -ua
   when:
-  - prelink_exists.stat.exists == True
+  - prelink_exists.stat.exists
   - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
   - high_complexity | bool
   - restrict_strategy | bool
@@ -1282,6 +460,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1309,6 +488,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1338,6 +518,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1365,6 +546,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1390,6 +572,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1417,6 +600,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1446,6 +630,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1475,6 +660,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1501,6 +687,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1528,6 +715,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1557,6 +745,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1586,6 +775,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1611,6 +801,7 @@
   - reboot_required
   - NIST-800-53-IA-5
   - NIST-800-53-SC-13
+  - NIST-800-53-AC-17(a)
   - NIST-800-53-AC-17(2)
   - NIST-800-53-IA-7
   - NIST-800-171-3.13.8
@@ -1624,20 +815,21 @@
   - ansible_distribution == "Fedora"
   - high_complexity | bool
   - no_reboot_needed | bool
+  - restrict_strategy | bool
   - high_severity | bool
   - rpm_verify_hashes | bool
-  - unknown_strategy | bool
   - medium_disruption | bool
   tags:
   - rpm_verify_hashes
   - high_severity
-  - unknown_strategy
+  - restrict_strategy
   - high_complexity
   - medium_disruption
   - no_reboot_needed
   - NIST-800-53-CM-6(d)
   - NIST-800-53-CM-6(3)
   - NIST-800-53-SI-7(1)
+  - NIST-800-53-AU-9(3)
   - NIST-800-171-3.3.8
   - NIST-800-171-3.4.1
   - PCI-DSS-Req-11.5
@@ -1650,34 +842,30 @@
   - (ansible_distribution == "RedHat" or ansible_distribution == "OracleLinux")
   - high_complexity | bool
   - no_reboot_needed | bool
+  - restrict_strategy | bool
   - high_severity | bool
   - rpm_verify_hashes | bool
-  - unknown_strategy | bool
   - medium_disruption | bool
   tags:
   - rpm_verify_hashes
   - high_severity
-  - unknown_strategy
+  - restrict_strategy
   - high_complexity
   - medium_disruption
   - no_reboot_needed
   - NIST-800-53-CM-6(d)
   - NIST-800-53-CM-6(3)
   - NIST-800-53-SI-7(1)
+  - NIST-800-53-AU-9(3)
   - NIST-800-171-3.3.8
   - NIST-800-171-3.4.1
   - PCI-DSS-Req-11.5
   - CJIS-5.10.4.1
 
 - name: Read files with incorrect hash
-  shell: 'set -o pipefail
-
-    rpm -Va | grep -E ''^..5.* /(bin|sbin|lib|lib64|usr)/'' | awk ''{print $NF}''
-
-    '
+  command: rpm -Va --nodeps --nosize --nomtime --nordev --nocaps --nolinkto --nouser --nogroup --nomode --noconfig --noghost
   args:
     warn: false
-    executable: /bin/bash
   register: files_with_incorrect_hash
   changed_when: false
   failed_when: files_with_incorrect_hash.rc > 1
@@ -1685,67 +873,96 @@
   - (package_manager_reinstall_cmd is defined)
   - high_complexity | bool
   - no_reboot_needed | bool
+  - restrict_strategy | bool
   - high_severity | bool
   - rpm_verify_hashes | bool
-  - unknown_strategy | bool
   - medium_disruption | bool
-  check_mode: false
   tags:
   - rpm_verify_hashes
   - high_severity
-  - unknown_strategy
+  - restrict_strategy
   - high_complexity
   - medium_disruption
   - no_reboot_needed
   - NIST-800-53-CM-6(d)
   - NIST-800-53-CM-6(3)
   - NIST-800-53-SI-7(1)
+  - NIST-800-53-AU-9(3)
+  - NIST-800-171-3.3.8
+  - NIST-800-171-3.4.1
+  - PCI-DSS-Req-11.5
+  - CJIS-5.10.4.1
+
+- name: Create list of packages
+  command: rpm -qf "{{ item }}"
+  args:
+    warn: false
+  with_items: '{{ files_with_incorrect_hash.stdout_lines | map(''regex_findall'', ''^[.]+[5]+.* (\/.*)'', ''\1'') | map(''join'')
+    | select(''match'', ''(\/.*)'') | list | unique }}'
+  register: list_of_packages
+  changed_when: false
+  when:
+  - files_with_incorrect_hash.stdout_lines is defined
+  - (files_with_incorrect_hash.stdout_lines | length > 0)
+  - high_complexity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - high_severity | bool
+  - rpm_verify_hashes | bool
+  - medium_disruption | bool
+  tags:
+  - rpm_verify_hashes
+  - high_severity
+  - restrict_strategy
+  - high_complexity
+  - medium_disruption
+  - no_reboot_needed
+  - NIST-800-53-CM-6(d)
+  - NIST-800-53-CM-6(3)
+  - NIST-800-53-SI-7(1)
+  - NIST-800-53-AU-9(3)
   - NIST-800-171-3.3.8
   - NIST-800-171-3.4.1
   - PCI-DSS-Req-11.5
   - CJIS-5.10.4.1
 
 - name: Reinstall packages of files with incorrect hash
-  shell: '{{ package_manager_reinstall_cmd }} $(rpm -qf ''{{ item }}'')'
+  command: '{{ package_manager_reinstall_cmd }} ''{{ item }}'''
   args:
     warn: false
-  with_items: '{{ files_with_incorrect_hash.stdout_lines }}'
+  with_items: '{{ list_of_packages.results | map(attribute=''stdout_lines'') | list | unique }}'
   when:
+  - files_with_incorrect_hash.stdout_lines is defined
   - (package_manager_reinstall_cmd is defined and (files_with_incorrect_hash.stdout_lines | length > 0))
   - high_complexity | bool
   - no_reboot_needed | bool
+  - restrict_strategy | bool
   - high_severity | bool
   - rpm_verify_hashes | bool
-  - unknown_strategy | bool
   - medium_disruption | bool
   tags:
   - rpm_verify_hashes
   - high_severity
-  - unknown_strategy
+  - restrict_strategy
   - high_complexity
   - medium_disruption
   - no_reboot_needed
   - NIST-800-53-CM-6(d)
   - NIST-800-53-CM-6(3)
   - NIST-800-53-SI-7(1)
+  - NIST-800-53-AU-9(3)
   - NIST-800-171-3.3.8
   - NIST-800-171-3.4.1
   - PCI-DSS-Req-11.5
   - CJIS-5.10.4.1
 
 - name: Read list of files with incorrect ownership
-  shell: 'set -o pipefail
-
-    rpm -Va --nofiledigest | awk ''{ if (substr($0,6,1)=="U" || substr($0,7,1)=="G") print $NF }''
-
-    '
+  command: rpm -Va --nodeps --nosignature --nofiledigest --nosize --nomtime --nordev --nocaps --nolinkto --nomode
   args:
     warn: false
-    executable: /bin/bash
   register: files_with_incorrect_ownership
   failed_when: files_with_incorrect_ownership.rc > 1
   changed_when: false
-  check_mode: false
   tags:
   - rpm_verify_ownership
   - high_severity
@@ -1774,8 +991,10 @@
   command: rpm -qf "{{ item }}"
   args:
     warn: false
-  with_items: '{{ files_with_incorrect_ownership.stdout_lines | unique }}'
+  with_items: '{{ files_with_incorrect_ownership.stdout_lines | map(''regex_findall'', ''^[.]+[U|G]+.* (\/.*)'', ''\1'') |
+    map(''join'') | select(''match'', ''(\/.*)'') | list | unique }}'
   register: list_of_packages
+  changed_when: false
   when:
   - (files_with_incorrect_ownership.stdout_lines | length > 0)
   - rpm_verify_ownership | bool
@@ -1832,18 +1051,12 @@
   - CJIS-5.10.4.1
 
 - name: Read list of files with incorrect permissions
-  shell: 'set -o pipefail
-
-    rpm -Va --nofiledigest | awk ''{ if (substr($0,2,1)=="M") print $NF }''
-
-    '
+  command: rpm -Va --nodeps --nosignature --nofiledigest --nosize --nomtime --nordev --nocaps --nolinkto --nouser --nogroup
   args:
     warn: false
-    executable: /bin/bash
   register: files_with_incorrect_permissions
   failed_when: files_with_incorrect_permissions.rc > 1
   changed_when: false
-  check_mode: false
   tags:
   - rpm_verify_permissions
   - high_severity
@@ -1868,11 +1081,14 @@
   - high_severity | bool
   - medium_disruption | bool
 
-- name: Correct file permissions with RPM
-  shell: rpm --setperms $(rpm -qf '{{ item }}')
+- name: Create list of packages
+  command: rpm -qf "{{ item }}"
   args:
     warn: false
-  with_items: '{{ files_with_incorrect_permissions.stdout_lines }}'
+  with_items: '{{ files_with_incorrect_permissions.stdout_lines | map(''regex_findall'', ''^[.]+[M]+.* (\/.*)'', ''\1'') |
+    map(''join'') | select(''match'', ''(\/.*)'') | list | unique }}'
+  register: list_of_packages
+  changed_when: false
   when:
   - (files_with_incorrect_permissions.stdout_lines | length > 0)
   - high_complexity | bool
@@ -1898,52 +1114,35 @@
   - PCI-DSS-Req-11.5
   - CJIS-5.10.4.1
 
-- name: Ensure libsemanage-python installed
-  package:
-    name: libsemanage-python
-    state: present
+- name: Correct file permissions with RPM
+  command: rpm --setperms '{{ item }}'
+  args:
+    warn: false
+  with_items: '{{ list_of_packages.results | map(attribute=''stdout_lines'') | list | unique }}'
   when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - sebool_fips_mode | bool
+  - (files_with_incorrect_permissions.stdout_lines | length > 0)
+  - high_complexity | bool
   - no_reboot_needed | bool
-  - medium_severity | bool
-  - enable_strategy | bool
-  - low_disruption | bool
-  - low_complexity | bool
+  - rpm_verify_permissions | bool
+  - restrict_strategy | bool
+  - high_severity | bool
+  - medium_disruption | bool
   tags:
-  - sebool_fips_mode
-  - medium_severity
-  - enable_strategy
-  - low_complexity
-  - low_disruption
+  - rpm_verify_permissions
+  - high_severity
+  - restrict_strategy
+  - high_complexity
+  - medium_disruption
   - no_reboot_needed
-  - NIST-800-53-SC-13
-  - NIST-800-53-SC-39
-  - NIST-800-171-3.13.11
-
-- name: Set SELinux boolean fips_mode accordingly
-  seboolean:
-    name: fips_mode
-    state: '{{ var_fips_mode }}'
-    persistent: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - sebool_fips_mode | bool
-  - no_reboot_needed | bool
-  - medium_severity | bool
-  - enable_strategy | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - sebool_fips_mode
-  - medium_severity
-  - enable_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-SC-13
-  - NIST-800-53-SC-39
-  - NIST-800-171-3.13.11
+  - NIST-800-53-AC-6
+  - NIST-800-53-AU-9(1)
+  - NIST-800-53-AU-9(3)
+  - NIST-800-53-CM-6(d)
+  - NIST-800-53-CM-6(3)
+  - NIST-800-171-3.3.8
+  - NIST-800-171-3.4.1
+  - PCI-DSS-Req-11.5
+  - CJIS-5.10.4.1
 
 - name: Ensure SELinux State is Enforcing
   lineinfile:
@@ -2036,6 +1235,53 @@
   - NIST-800-171-3.1.2
   - NIST-800-171-3.7.2
 
+- name: Ensure libsemanage-python installed
+  package:
+    name: libsemanage-python
+    state: present
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - sebool_fips_mode | bool
+  - no_reboot_needed | bool
+  - medium_severity | bool
+  - enable_strategy | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sebool_fips_mode
+  - medium_severity
+  - enable_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-SC-13
+  - NIST-800-53-SC-39
+  - NIST-800-171-3.13.11
+
+- name: Set SELinux boolean fips_mode accordingly
+  seboolean:
+    name: fips_mode
+    state: '{{ var_fips_mode }}'
+    persistent: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - sebool_fips_mode | bool
+  - no_reboot_needed | bool
+  - medium_severity | bool
+  - enable_strategy | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sebool_fips_mode
+  - medium_severity
+  - enable_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-SC-13
+  - NIST-800-53-SC-39
+  - NIST-800-171-3.13.11
+
 - name: Ensure kernel module 'usb-storage' is disabled
   lineinfile:
     create: true
@@ -2111,39 +1357,10 @@
   - reboot_required
   - NIST-800-53-SC-39
 
-- name: Ensure kernel module 'bluetooth' is disabled
-  lineinfile:
-    create: true
-    dest: /etc/modprobe.d/bluetooth.conf
-    regexp: bluetooth
-    line: install bluetooth /bin/true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - kernel_module_bluetooth_disabled | bool
-  - reboot_required | bool
-  - disable_strategy | bool
-  - medium_severity | bool
-  - medium_disruption | bool
-  - low_complexity | bool
-  tags:
-  - kernel_module_bluetooth_disabled
-  - medium_severity
-  - disable_strategy
-  - low_complexity
-  - medium_disruption
-  - reboot_required
-  - NIST-800-53-AC-17(8)
-  - NIST-800-53-AC-18(a)
-  - NIST-800-53-AC-18(d)
-  - NIST-800-53-AC-18(3)
-  - NIST-800-53-CM-7
-  - NIST-800-53-MP-7
-  - NIST-800-171-3.1.16
-  - CJIS-5.13.1.3
-
-- name: Unit Service Exists
-  shell: systemctl list-unit-files | grep -q '^bluetooth.service'
+- name: Unit Service Exists - bluetooth.service
+  command: systemctl list-unit-files bluetooth.service
   register: service_file_exists
+  changed_when: false
   ignore_errors: true
   when:
   - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
@@ -2175,7 +1392,7 @@
     state: stopped
     masked: 'yes'
   when:
-  - service_file_exists.rc == 0
+  - '"bluetooth.service" in service_file_exists.stdout_lines[1]'
   - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
   - disable_strategy | bool
   - no_reboot_needed | bool
@@ -2198,9 +1415,10 @@
   - NIST-800-53-MP-7
   - NIST-800-171-3.1.16
 
-- name: Unit Socket Exists
-  shell: systemctl list-unit-files | grep -q '^bluetooth.socket'
+- name: Unit Socket Exists - bluetooth.socket
+  command: systemctl list-unit-files bluetooth.socket
   register: socket_file_exists
+  changed_when: false
   ignore_errors: true
   when:
   - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
@@ -2232,7 +1450,7 @@
     state: stopped
     masked: 'yes'
   when:
-  - socket_file_exists.rc == 0
+  - '"bluetooth.socket" in socket_file_exists.stdout_lines[1]'
   - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
   - disable_strategy | bool
   - no_reboot_needed | bool
@@ -2254,6 +1472,1243 @@
   - NIST-800-53-CM-7
   - NIST-800-53-MP-7
   - NIST-800-171-3.1.16
+
+- name: Ensure kernel module 'bluetooth' is disabled
+  lineinfile:
+    create: true
+    dest: /etc/modprobe.d/bluetooth.conf
+    regexp: bluetooth
+    line: install bluetooth /bin/true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - kernel_module_bluetooth_disabled | bool
+  - reboot_required | bool
+  - disable_strategy | bool
+  - medium_severity | bool
+  - medium_disruption | bool
+  - low_complexity | bool
+  tags:
+  - kernel_module_bluetooth_disabled
+  - medium_severity
+  - disable_strategy
+  - low_complexity
+  - medium_disruption
+  - reboot_required
+  - NIST-800-53-AC-17(8)
+  - NIST-800-53-AC-18(a)
+  - NIST-800-53-AC-18(d)
+  - NIST-800-53-AC-18(3)
+  - NIST-800-53-CM-7
+  - NIST-800-53-MP-7
+  - NIST-800-171-3.1.16
+  - CJIS-5.13.1.3
+
+- name: Enable service auditd
+  block:
+  - name: Gather the package facts
+    package_facts:
+      manager: auto
+  - name: Enable service auditd
+    service:
+      name: auditd
+      enabled: 'yes'
+      state: started
+    when:
+    - '"audit" in ansible_facts.packages'
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - high_severity | bool
+  - enable_strategy | bool
+  - service_auditd_enabled | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - service_auditd_enabled
+  - high_severity
+  - enable_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-2(g)
+  - NIST-800-53-AU-3
+  - NIST-800-53-AC-17(1)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-10
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-14(1)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AU-12(1)
+  - NIST-800-171-3.3.1
+  - NIST-800-171-3.3.2
+  - NIST-800-171-3.3.6
+  - PCI-DSS-Req-10.1
+  - CJIS-5.4.1.1
+
+- name: check audit argument exists
+  command: grep 'GRUB_CMDLINE_LINUX.*audit=' /etc/default/grub
+  failed_when: false
+  register: argcheck
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - grub2_audit_argument | bool
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - medium_complexity | bool
+  - low_disruption | bool
+  tags:
+  - grub2_audit_argument
+  - medium_severity
+  - restrict_strategy
+  - medium_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-17(1)
+  - NIST-800-53-AU-14(1)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-10
+  - NIST-800-53-AU-12
+  - NIST-800-53-IR-5
+  - NIST-800-53-AU-12(1)
+  - NIST-800-171-3.3.1
+  - PCI-DSS-Req-10.3
+  - CJIS-5.4.1.1
+
+- name: replace existing audit argument
+  replace:
+    path: /etc/default/grub
+    regexp: audit=.
+    replace: audit=1
+  when:
+  - argcheck.rc == 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - grub2_audit_argument | bool
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - medium_complexity | bool
+  - low_disruption | bool
+  tags:
+  - grub2_audit_argument
+  - medium_severity
+  - restrict_strategy
+  - medium_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-17(1)
+  - NIST-800-53-AU-14(1)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-10
+  - NIST-800-53-AU-12
+  - NIST-800-53-IR-5
+  - NIST-800-53-AU-12(1)
+  - NIST-800-171-3.3.1
+  - PCI-DSS-Req-10.3
+  - CJIS-5.4.1.1
+
+- name: add audit argument
+  replace:
+    path: /etc/default/grub
+    regexp: (GRUB_CMDLINE_LINUX=.*)"
+    replace: \1 audit=1"
+  when:
+  - argcheck.rc != 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - grub2_audit_argument | bool
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - medium_complexity | bool
+  - low_disruption | bool
+  tags:
+  - grub2_audit_argument
+  - medium_severity
+  - restrict_strategy
+  - medium_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-17(1)
+  - NIST-800-53-AU-14(1)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-10
+  - NIST-800-53-AU-12
+  - NIST-800-53-IR-5
+  - NIST-800-53-AU-12(1)
+  - NIST-800-171-3.3.1
+  - PCI-DSS-Req-10.3
+  - CJIS-5.4.1.1
+
+- name: update bootloader menu
+  command: /sbin/grubby --update-kernel=ALL --args="audit=1"
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - grub2_audit_argument | bool
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - medium_complexity | bool
+  - low_disruption | bool
+  tags:
+  - grub2_audit_argument
+  - medium_severity
+  - restrict_strategy
+  - medium_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-17(1)
+  - NIST-800-53-AU-14(1)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-10
+  - NIST-800-53-AU-12
+  - NIST-800-53-IR-5
+  - NIST-800-53-AU-12(1)
+  - NIST-800-171-3.3.1
+  - PCI-DSS-Req-10.3
+  - CJIS-5.4.1.1
+
+- name: Set architecture for audit opasswd tasks
+  set_fact:
+    audit_arch: b{{ ansible_architecture | regex_replace('.*(\d\d$)','\1') }}
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - audit_rules_usergroup_modification_opasswd | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_opasswd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Search /etc/audit/rules.d for other user/group modification audit rules
+  find:
+    paths: /etc/audit/rules.d
+    recurse: false
+    contains: -k audit_rules_usergroup_modification$
+    patterns: '*.rules'
+  register: find_opasswd
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - audit_rules_usergroup_modification_opasswd | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_opasswd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: If existing user/group modification ruleset not found, use /etc/audit/rules.d/privileged.rules as the recipient for
+    the rule
+  set_fact:
+    all_files:
+    - /etc/audit/rules.d/privileged.rules
+  when:
+  - find_opasswd.matched is defined and find_opasswd.matched == 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - audit_rules_usergroup_modification_opasswd | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_opasswd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Use matched file as the recipient for the rule
+  set_fact:
+    all_files:
+    - '{{ find_opasswd.files | map(attribute=''path'') | list | first }}'
+  when:
+  - find_opasswd.matched is defined and find_opasswd.matched > 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - audit_rules_usergroup_modification_opasswd | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_opasswd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Inserts/replaces the opasswd rule in rules.d when on x86
+  lineinfile:
+    path: '{{ all_files[0] }}'
+    line: -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
+    create: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - audit_rules_usergroup_modification_opasswd | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_opasswd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Inserts/replaces the opasswd rule in /etc/audit/audit.rules
+  lineinfile:
+    line: -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
+    state: present
+    dest: /etc/audit/audit.rules
+    create: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - audit_rules_usergroup_modification_opasswd | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_opasswd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Set architecture for audit shadow tasks
+  set_fact:
+    audit_arch: b{{ ansible_architecture | regex_replace('.*(\d\d$)','\1') }}
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_shadow | bool
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_shadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Search /etc/audit/rules.d for other user/group modification audit rules
+  find:
+    paths: /etc/audit/rules.d
+    recurse: false
+    contains: -k audit_rules_usergroup_modification$
+    patterns: '*.rules'
+  register: find_shadow
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_shadow | bool
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_shadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: If existing user/group modification ruleset not found, use /etc/audit/rules.d/privileged.rules as the recipient for
+    the rule
+  set_fact:
+    all_files:
+    - /etc/audit/rules.d/privileged.rules
+  when:
+  - find_shadow.matched is defined and find_shadow.matched == 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_shadow | bool
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_shadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Use matched file as the recipient for the rule
+  set_fact:
+    all_files:
+    - '{{ find_shadow.files | map(attribute=''path'') | list | first }}'
+  when:
+  - find_shadow.matched is defined and find_shadow.matched > 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_shadow | bool
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_shadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Inserts/replaces the shadow rule in rules.d when on x86
+  lineinfile:
+    path: '{{ all_files[0] }}'
+    line: -w /etc/shadow -p wa -k audit_rules_usergroup_modification
+    create: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_shadow | bool
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_shadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Inserts/replaces the shadow rule in /etc/audit/audit.rules
+  lineinfile:
+    line: -w /etc/shadow -p wa -k audit_rules_usergroup_modification
+    state: present
+    dest: /etc/audit/audit.rules
+    create: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_shadow | bool
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_shadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Set architecture for audit gshadow tasks
+  set_fact:
+    audit_arch: b{{ ansible_architecture | regex_replace('.*(\d\d$)','\1') }}
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_gshadow | bool
+  - reboot_required | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_gshadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Search /etc/audit/rules.d for other user/group modification audit rules
+  find:
+    paths: /etc/audit/rules.d
+    recurse: false
+    contains: -k audit_rules_usergroup_modification$
+    patterns: '*.rules'
+  register: find_gshadow
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_gshadow | bool
+  - reboot_required | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_gshadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: If existing user/group modification ruleset not found, use /etc/audit/rules.d/privileged.rules as the recipient for
+    the rule
+  set_fact:
+    all_files:
+    - /etc/audit/rules.d/privileged.rules
+  when:
+  - find_gshadow.matched is defined and find_gshadow.matched == 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_gshadow | bool
+  - reboot_required | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_gshadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Use matched file as the recipient for the rule
+  set_fact:
+    all_files:
+    - '{{ find_gshadow.files | map(attribute=''path'') | list | first }}'
+  when:
+  - find_gshadow.matched is defined and find_gshadow.matched > 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_gshadow | bool
+  - reboot_required | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_gshadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Inserts/replaces the gshadow rule in rules.d when on x86
+  lineinfile:
+    path: '{{ all_files[0] }}'
+    line: -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
+    create: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_gshadow | bool
+  - reboot_required | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_gshadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Inserts/replaces the gshadow rule in /etc/audit/audit.rules
+  lineinfile:
+    line: -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
+    state: present
+    dest: /etc/audit/audit.rules
+    create: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - audit_rules_usergroup_modification_gshadow | bool
+  - reboot_required | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_gshadow
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Set architecture for audit passwd tasks
+  set_fact:
+    audit_arch: b{{ ansible_architecture | regex_replace('.*(\d\d$)','\1') }}
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - audit_rules_usergroup_modification_passwd | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_passwd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Search /etc/audit/rules.d for other user/group modification audit rules
+  find:
+    paths: /etc/audit/rules.d
+    recurse: false
+    contains: -k audit_rules_usergroup_modification$
+    patterns: '*.rules'
+  register: find_passwd
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - audit_rules_usergroup_modification_passwd | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_passwd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: If existing user/group modification ruleset not found, use /etc/audit/rules.d/privileged.rules as the recipient for
+    the rule
+  set_fact:
+    all_files:
+    - /etc/audit/rules.d/privileged.rules
+  when:
+  - find_passwd.matched is defined and find_passwd.matched == 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - audit_rules_usergroup_modification_passwd | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_passwd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Use matched file as the recipient for the rule
+  set_fact:
+    all_files:
+    - '{{ find_passwd.files | map(attribute=''path'') | list | first }}'
+  when:
+  - find_passwd.matched is defined and find_passwd.matched > 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - audit_rules_usergroup_modification_passwd | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_passwd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Inserts/replaces the passwd rule in rules.d when on x86
+  lineinfile:
+    path: '{{ all_files[0] }}'
+    line: -w /etc/passwd -p wa -k audit_rules_usergroup_modification
+    create: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - audit_rules_usergroup_modification_passwd | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_passwd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Inserts/replaces the passwd rule in /etc/audit/audit.rules
+  lineinfile:
+    line: -w /etc/passwd -p wa -k audit_rules_usergroup_modification
+    state: present
+    dest: /etc/audit/audit.rules
+    create: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - audit_rules_usergroup_modification_passwd | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_passwd
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Set architecture for audit group tasks
+  set_fact:
+    audit_arch: b{{ ansible_architecture | regex_replace('.*(\d\d$)','\1') }}
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - audit_rules_usergroup_modification_group | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_group
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Search /etc/audit/rules.d for other user/group modification audit rules
+  find:
+    paths: /etc/audit/rules.d
+    recurse: false
+    contains: -k audit_rules_usergroup_modification$
+    patterns: '*.rules'
+  register: find_group
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - audit_rules_usergroup_modification_group | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_group
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: If existing user/group modification ruleset not found, use /etc/audit/rules.d/privileged.rules as the recipient for
+    the rule
+  set_fact:
+    all_files:
+    - /etc/audit/rules.d/privileged.rules
+  when:
+  - find_group.matched is defined and find_group.matched == 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - audit_rules_usergroup_modification_group | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_group
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Use matched file as the recipient for the rule
+  set_fact:
+    all_files:
+    - '{{ find_group.files | map(attribute=''path'') | list | first }}'
+  when:
+  - find_group.matched is defined and find_group.matched > 0
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - audit_rules_usergroup_modification_group | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_group
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Inserts/replaces the group rule in rules.d when on x86
+  lineinfile:
+    path: '{{ all_files[0] }}'
+    line: -w /etc/group -p wa -k audit_rules_usergroup_modification
+    create: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - audit_rules_usergroup_modification_group | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_group
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
+
+- name: Inserts/replaces the group rule in /etc/audit/audit.rules
+  lineinfile:
+    line: -w /etc/group -p wa -k audit_rules_usergroup_modification
+    state: present
+    dest: /etc/audit/audit.rules
+    create: true
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - restrict_strategy | bool
+  - reboot_required | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - audit_rules_usergroup_modification_group | bool
+  - low_complexity | bool
+  tags:
+  - audit_rules_usergroup_modification_group
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-AC-2(4)
+  - NIST-800-53-AC-17(7)
+  - NIST-800-53-AU-1(b)
+  - NIST-800-53-AU-2(a)
+  - NIST-800-53-AU-2(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-AU-12(a)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
+  - NIST-800-171-3.1.7
+  - PCI-DSS-Req-10.2.5
+  - CJIS-5.4.1.1
 
 - name: Set architecture for audit fremovexattr tasks
   set_fact:
@@ -5658,6 +6113,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5688,6 +6144,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5717,6 +6174,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5745,6 +6203,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5773,6 +6232,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5802,6 +6262,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5828,6 +6289,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5858,6 +6320,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5887,6 +6350,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5915,6 +6379,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5943,6 +6408,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5972,6 +6438,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -5998,6 +6465,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -6028,6 +6496,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -6057,6 +6526,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -6085,6 +6555,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -6113,6 +6584,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -6142,6 +6614,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.3
 
@@ -6169,6 +6642,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -6193,6 +6667,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -6217,6 +6692,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the crontab rule in rules.d
@@ -6241,6 +6717,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the crontab rule in audit.rules
@@ -6265,6 +6742,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -6291,6 +6769,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -6315,6 +6794,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -6339,6 +6819,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the ssh_keysign rule in rules.d
@@ -6363,6 +6844,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the ssh_keysign rule in audit.rules
@@ -6387,6 +6869,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -6413,6 +6896,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -6437,6 +6921,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -6461,6 +6946,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the gpasswd rule in rules.d
@@ -6485,6 +6971,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the gpasswd rule in audit.rules
@@ -6509,6 +6996,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -6535,6 +7023,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -6559,6 +7048,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -6583,6 +7073,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the passwd rule in rules.d
@@ -6607,6 +7098,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the passwd rule in audit.rules
@@ -6631,14 +7123,11 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search for privileged commands
-  shell: 'set -o pipefail
-
-    find / -xdev -type f -perm -4000 -o -type f -perm -2000 2>/dev/null | cat
-
-    '
+  shell: find / -xdev -type f -perm -4000 -o -type f -perm -2000 2>/dev/null
   args:
     warn: false
     executable: /bin/bash
@@ -6670,6 +7159,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.2
   - CJIS-5.4.1.1
@@ -6708,6 +7198,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.2
   - CJIS-5.4.1.1
@@ -6746,6 +7237,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.2
   - CJIS-5.4.1.1
@@ -6783,6 +7275,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.2
   - CJIS-5.4.1.1
@@ -6820,6 +7313,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.2
   - CJIS-5.4.1.1
@@ -6848,6 +7342,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -6872,6 +7367,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -6896,6 +7392,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the sudo rule in rules.d
@@ -6920,6 +7417,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the sudo rule in audit.rules
@@ -6944,6 +7442,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -6970,6 +7469,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -6994,6 +7494,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -7018,6 +7519,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the postdrop rule in rules.d
@@ -7042,6 +7544,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the postdrop rule in audit.rules
@@ -7066,6 +7569,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -7092,6 +7596,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -7116,6 +7621,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -7140,6 +7646,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the pam_timestamp_check rule in rules.d
@@ -7164,6 +7671,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the pam_timestamp_check rule in audit.rules
@@ -7188,6 +7696,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -7214,6 +7723,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -7238,6 +7748,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -7262,6 +7773,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the postqueue rule in rules.d
@@ -7286,6 +7798,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the postqueue rule in audit.rules
@@ -7310,6 +7823,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -7336,6 +7850,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -7360,6 +7875,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -7384,6 +7900,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the newgrp rule in rules.d
@@ -7408,6 +7925,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the newgrp rule in audit.rules
@@ -7432,6 +7950,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -7458,6 +7977,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -7482,6 +8002,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -7506,6 +8027,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the sudoedit rule in rules.d
@@ -7530,6 +8052,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the sudoedit rule in audit.rules
@@ -7554,6 +8077,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -7580,6 +8104,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -7604,6 +8129,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -7628,6 +8154,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the unix_chkpwd rule in rules.d
@@ -7652,6 +8179,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the unix_chkpwd rule in audit.rules
@@ -7676,6 +8204,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -7702,6 +8231,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -7726,6 +8256,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -7750,6 +8281,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the su rule in rules.d
@@ -7774,6 +8306,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the su rule in audit.rules
@@ -7798,6 +8331,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -7824,6 +8358,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -7848,6 +8383,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -7872,6 +8408,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the chsh rule in rules.d
@@ -7896,6 +8433,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the chsh rule in audit.rules
@@ -7920,6 +8458,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -7946,6 +8485,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -7970,6 +8510,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -7994,6 +8535,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the userhelper rule in rules.d
@@ -8018,6 +8560,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the userhelper rule in audit.rules
@@ -8042,6 +8585,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -8068,6 +8612,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -8092,6 +8637,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -8116,6 +8662,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the chage rule in rules.d
@@ -8140,6 +8687,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the chage rule in audit.rules
@@ -8164,6 +8712,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -8190,6 +8739,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -8214,6 +8764,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -8238,6 +8789,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the umount rule in rules.d
@@ -8262,6 +8814,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the umount rule in audit.rules
@@ -8286,6 +8839,7 @@
   - no_reboot_needed
   - NIST-800-53-AU-3(1)
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -8311,6 +8865,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -8334,6 +8889,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -8357,6 +8913,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the semanage rule in rules.d
@@ -8380,6 +8937,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the semanage rule in audit.rules
@@ -8403,6 +8961,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -8428,6 +8987,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -8451,6 +9011,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -8474,6 +9035,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the chcon rule in rules.d
@@ -8497,6 +9059,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the chcon rule in audit.rules
@@ -8520,6 +9083,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Search /etc/audit/rules.d for audit rule entries
@@ -8545,6 +9109,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
   set_fact:
@@ -8567,6 +9132,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
 
 - name: Use matched file as the recipient for the rule
   set_fact:
@@ -8589,6 +9155,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
 
 - name: Inserts/replaces the setfiles rule in rules.d
   lineinfile:
@@ -8611,6 +9178,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
 
 - name: Inserts/replaces the setfiles rule in audit.rules
   lineinfile:
@@ -8633,6 +9201,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
 
 - name: Search /etc/audit/rules.d for audit rule entries
   find:
@@ -8657,6 +9226,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use /etc/audit/rules.d/privileged.rules as the recipient for the rule
@@ -8680,6 +9250,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Use matched file as the recipient for the rule
@@ -8703,6 +9274,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the setsebool rule in rules.d
@@ -8726,6 +9298,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Inserts/replaces the setsebool rule in audit.rules
@@ -8749,6 +9322,7 @@
   - low_disruption
   - no_reboot_needed
   - NIST-800-53-AU-12(c)
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
 
 - name: Add unsuccessful file operations audit rules
@@ -11543,6 +12117,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11576,6 +12151,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11607,6 +12183,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11638,6 +12215,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11670,6 +12248,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11703,6 +12282,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11734,6 +12314,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11766,6 +12347,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11795,6 +12377,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11828,6 +12411,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11859,6 +12443,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11890,6 +12475,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11922,6 +12508,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11955,6 +12542,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -11986,6 +12574,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -12018,6 +12607,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -12047,6 +12637,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -12080,6 +12671,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -12111,6 +12703,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -12142,6 +12735,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -12174,6 +12768,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -12207,6 +12802,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -12238,6 +12834,7 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
@@ -12270,1180 +12867,150 @@
   - NIST-800-53-AU-12(a)
   - NIST-800-53-AU-12(c)
   - NIST-800-53-IR-5
+  - NIST-800-53-AC-6(9)
   - NIST-800-171-3.1.7
   - PCI-DSS-Req-10.2.7
 
-- name: Set architecture for audit opasswd tasks
-  set_fact:
-    audit_arch: b{{ ansible_architecture | regex_replace('.*(\d\d$)','\1') }}
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - audit_rules_usergroup_modification_opasswd | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_opasswd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Search /etc/audit/rules.d for other user/group modification audit rules
-  find:
-    paths: /etc/audit/rules.d
-    recurse: false
-    contains: -k audit_rules_usergroup_modification$
-    patterns: '*.rules'
-  register: find_opasswd
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - audit_rules_usergroup_modification_opasswd | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_opasswd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: If existing user/group modification ruleset not found, use /etc/audit/rules.d/privileged.rules as the recipient for
-    the rule
-  set_fact:
-    all_files:
-    - /etc/audit/rules.d/privileged.rules
-  when:
-  - find_opasswd.matched is defined and find_opasswd.matched == 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - audit_rules_usergroup_modification_opasswd | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_opasswd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Use matched file as the recipient for the rule
-  set_fact:
-    all_files:
-    - '{{ find_opasswd.files | map(attribute=''path'') | list | first }}'
-  when:
-  - find_opasswd.matched is defined and find_opasswd.matched > 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - audit_rules_usergroup_modification_opasswd | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_opasswd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Inserts/replaces the opasswd rule in rules.d when on x86
-  lineinfile:
-    path: '{{ all_files[0] }}'
-    line: -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
-    create: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - audit_rules_usergroup_modification_opasswd | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_opasswd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Inserts/replaces the opasswd rule in /etc/audit/audit.rules
-  lineinfile:
-    line: -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
-    state: present
-    dest: /etc/audit/audit.rules
-    create: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - audit_rules_usergroup_modification_opasswd | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_opasswd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Set architecture for audit shadow tasks
-  set_fact:
-    audit_arch: b{{ ansible_architecture | regex_replace('.*(\d\d$)','\1') }}
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_shadow | bool
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_shadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Search /etc/audit/rules.d for other user/group modification audit rules
-  find:
-    paths: /etc/audit/rules.d
-    recurse: false
-    contains: -k audit_rules_usergroup_modification$
-    patterns: '*.rules'
-  register: find_shadow
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_shadow | bool
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_shadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: If existing user/group modification ruleset not found, use /etc/audit/rules.d/privileged.rules as the recipient for
-    the rule
-  set_fact:
-    all_files:
-    - /etc/audit/rules.d/privileged.rules
-  when:
-  - find_shadow.matched is defined and find_shadow.matched == 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_shadow | bool
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_shadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Use matched file as the recipient for the rule
-  set_fact:
-    all_files:
-    - '{{ find_shadow.files | map(attribute=''path'') | list | first }}'
-  when:
-  - find_shadow.matched is defined and find_shadow.matched > 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_shadow | bool
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_shadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Inserts/replaces the shadow rule in rules.d when on x86
-  lineinfile:
-    path: '{{ all_files[0] }}'
-    line: -w /etc/shadow -p wa -k audit_rules_usergroup_modification
-    create: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_shadow | bool
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_shadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Inserts/replaces the shadow rule in /etc/audit/audit.rules
-  lineinfile:
-    line: -w /etc/shadow -p wa -k audit_rules_usergroup_modification
-    state: present
-    dest: /etc/audit/audit.rules
-    create: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_shadow | bool
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_shadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Set architecture for audit gshadow tasks
-  set_fact:
-    audit_arch: b{{ ansible_architecture | regex_replace('.*(\d\d$)','\1') }}
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_gshadow | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_gshadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Search /etc/audit/rules.d for other user/group modification audit rules
-  find:
-    paths: /etc/audit/rules.d
-    recurse: false
-    contains: -k audit_rules_usergroup_modification$
-    patterns: '*.rules'
-  register: find_gshadow
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_gshadow | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_gshadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: If existing user/group modification ruleset not found, use /etc/audit/rules.d/privileged.rules as the recipient for
-    the rule
-  set_fact:
-    all_files:
-    - /etc/audit/rules.d/privileged.rules
-  when:
-  - find_gshadow.matched is defined and find_gshadow.matched == 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_gshadow | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_gshadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Use matched file as the recipient for the rule
-  set_fact:
-    all_files:
-    - '{{ find_gshadow.files | map(attribute=''path'') | list | first }}'
-  when:
-  - find_gshadow.matched is defined and find_gshadow.matched > 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_gshadow | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_gshadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Inserts/replaces the gshadow rule in rules.d when on x86
-  lineinfile:
-    path: '{{ all_files[0] }}'
-    line: -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
-    create: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_gshadow | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_gshadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Inserts/replaces the gshadow rule in /etc/audit/audit.rules
-  lineinfile:
-    line: -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
-    state: present
-    dest: /etc/audit/audit.rules
-    create: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - audit_rules_usergroup_modification_gshadow | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_gshadow
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Set architecture for audit passwd tasks
-  set_fact:
-    audit_arch: b{{ ansible_architecture | regex_replace('.*(\d\d$)','\1') }}
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - audit_rules_usergroup_modification_passwd | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_passwd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Search /etc/audit/rules.d for other user/group modification audit rules
-  find:
-    paths: /etc/audit/rules.d
-    recurse: false
-    contains: -k audit_rules_usergroup_modification$
-    patterns: '*.rules'
-  register: find_passwd
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - audit_rules_usergroup_modification_passwd | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_passwd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: If existing user/group modification ruleset not found, use /etc/audit/rules.d/privileged.rules as the recipient for
-    the rule
-  set_fact:
-    all_files:
-    - /etc/audit/rules.d/privileged.rules
-  when:
-  - find_passwd.matched is defined and find_passwd.matched == 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - audit_rules_usergroup_modification_passwd | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_passwd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Use matched file as the recipient for the rule
-  set_fact:
-    all_files:
-    - '{{ find_passwd.files | map(attribute=''path'') | list | first }}'
-  when:
-  - find_passwd.matched is defined and find_passwd.matched > 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - audit_rules_usergroup_modification_passwd | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_passwd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Inserts/replaces the passwd rule in rules.d when on x86
-  lineinfile:
-    path: '{{ all_files[0] }}'
-    line: -w /etc/passwd -p wa -k audit_rules_usergroup_modification
-    create: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - audit_rules_usergroup_modification_passwd | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_passwd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Inserts/replaces the passwd rule in /etc/audit/audit.rules
-  lineinfile:
-    line: -w /etc/passwd -p wa -k audit_rules_usergroup_modification
-    state: present
-    dest: /etc/audit/audit.rules
-    create: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - audit_rules_usergroup_modification_passwd | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_passwd
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Set architecture for audit group tasks
-  set_fact:
-    audit_arch: b{{ ansible_architecture | regex_replace('.*(\d\d$)','\1') }}
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - audit_rules_usergroup_modification_group | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_group
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Search /etc/audit/rules.d for other user/group modification audit rules
-  find:
-    paths: /etc/audit/rules.d
-    recurse: false
-    contains: -k audit_rules_usergroup_modification$
-    patterns: '*.rules'
-  register: find_group
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - audit_rules_usergroup_modification_group | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_group
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: If existing user/group modification ruleset not found, use /etc/audit/rules.d/privileged.rules as the recipient for
-    the rule
-  set_fact:
-    all_files:
-    - /etc/audit/rules.d/privileged.rules
-  when:
-  - find_group.matched is defined and find_group.matched == 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - audit_rules_usergroup_modification_group | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_group
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Use matched file as the recipient for the rule
-  set_fact:
-    all_files:
-    - '{{ find_group.files | map(attribute=''path'') | list | first }}'
-  when:
-  - find_group.matched is defined and find_group.matched > 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - audit_rules_usergroup_modification_group | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_group
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Inserts/replaces the group rule in rules.d when on x86
-  lineinfile:
-    path: '{{ all_files[0] }}'
-    line: -w /etc/group -p wa -k audit_rules_usergroup_modification
-    create: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - audit_rules_usergroup_modification_group | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_group
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: Inserts/replaces the group rule in /etc/audit/audit.rules
-  lineinfile:
-    line: -w /etc/group -p wa -k audit_rules_usergroup_modification
-    state: present
-    dest: /etc/audit/audit.rules
-    create: true
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - audit_rules_usergroup_modification_group | bool
-  - low_complexity | bool
-  tags:
-  - audit_rules_usergroup_modification_group
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-2(4)
-  - NIST-800-53-AC-17(7)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.1.7
-  - PCI-DSS-Req-10.2.5
-  - CJIS-5.4.1.1
-
-- name: check audit argument exists
-  command: grep 'GRUB_CMDLINE_LINUX.*audit=' /etc/default/grub
-  failed_when: false
-  register: argcheck
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - grub2_audit_argument | bool
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - medium_complexity | bool
-  - low_disruption | bool
-  tags:
-  - grub2_audit_argument
-  - medium_severity
-  - restrict_strategy
-  - medium_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-17(1)
-  - NIST-800-53-AU-14(1)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-10
-  - NIST-800-53-AU-12
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.3.1
-  - PCI-DSS-Req-10.3
-  - CJIS-5.4.1.1
-
-- name: replace existing audit argument
+- name: Verify that Interactive Boot is Disabled in /etc/default/grub
   replace:
-    path: /etc/default/grub
-    regexp: audit=.
-    replace: audit=1
-  when:
-  - argcheck.rc == 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - grub2_audit_argument | bool
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - medium_complexity | bool
-  - low_disruption | bool
-  tags:
-  - grub2_audit_argument
-  - medium_severity
-  - restrict_strategy
-  - medium_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-17(1)
-  - NIST-800-53-AU-14(1)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-10
-  - NIST-800-53-AU-12
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.3.1
-  - PCI-DSS-Req-10.3
-  - CJIS-5.4.1.1
-
-- name: add audit argument
-  replace:
-    path: /etc/default/grub
-    regexp: (GRUB_CMDLINE_LINUX=.*)"
-    replace: \1 audit=1"
-  when:
-  - argcheck.rc != 0
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - grub2_audit_argument | bool
-  - restrict_strategy | bool
-  - reboot_required | bool
-  - medium_severity | bool
-  - medium_complexity | bool
-  - low_disruption | bool
-  tags:
-  - grub2_audit_argument
-  - medium_severity
-  - restrict_strategy
-  - medium_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-AC-17(1)
-  - NIST-800-53-AU-14(1)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-10
-  - NIST-800-53-AU-12
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.3.1
-  - PCI-DSS-Req-10.3
-  - CJIS-5.4.1.1
-
-- name: update bootloader menu
-  command: /sbin/grubby --update-kernel=ALL --args="audit=1"
+    dest: /etc/default/grub
+    regexp: systemd.confirm_spawn=(1|yes|true|on)
+    replace: systemd.confirm_spawn=no
   when:
   - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - grub2_audit_argument | bool
-  - restrict_strategy | bool
+  - grub2_disable_interactive_boot | bool
   - reboot_required | bool
+  - restrict_strategy | bool
   - medium_severity | bool
-  - medium_complexity | bool
   - low_disruption | bool
+  - low_complexity | bool
   tags:
-  - grub2_audit_argument
+  - grub2_disable_interactive_boot
   - medium_severity
   - restrict_strategy
-  - medium_complexity
+  - low_complexity
   - low_disruption
   - reboot_required
-  - NIST-800-53-AC-17(1)
-  - NIST-800-53-AU-14(1)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-2(a)
-  - NIST-800-53-AU-2(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-AU-10
-  - NIST-800-53-AU-12
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.3.1
-  - PCI-DSS-Req-10.3
-  - CJIS-5.4.1.1
+  - NIST-800-53-SC-2
+  - NIST-800-53-AC-3
+  - NIST-800-171-3.1.2
+  - NIST-800-171-3.4.5
 
-- name: Enable service auditd
-  block:
-  - name: Gather the package facts
-    package_facts:
-      manager: auto
-  - name: Enable service auditd
-    service:
-      name: auditd
-      enabled: 'yes'
-      state: started
-    when:
-    - '"audit" in ansible_facts.packages'
+- name: Verify that Interactive Boot is Disabled (runtime)
+  command: /sbin/grubby --update-kernel=ALL --remove-args="systemd.confirm_spawn"
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - grub2_disable_interactive_boot | bool
+  - reboot_required | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - grub2_disable_interactive_boot
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - reboot_required
+  - NIST-800-53-SC-2
+  - NIST-800-53-AC-3
+  - NIST-800-171-3.1.2
+  - NIST-800-171-3.4.5
+
+- name: require single user mode password
+  lineinfile:
+    create: true
+    dest: /usr/lib/systemd/system/rescue.service
+    regexp: ^#?ExecStart=
+    line: ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - require_singleuser_auth | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - require_singleuser_auth
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-IA-2
+  - NIST-800-53-IA-2(1)
+  - NIST-800-53-AC-3
+  - NIST-800-171-3.1.1
+  - NIST-800-171-3.4.5
+
+- name: Ensure opensc is installed
+  package:
+    name: opensc
+    state: present
   when:
   - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
   - no_reboot_needed | bool
-  - high_severity | bool
+  - medium_severity | bool
   - enable_strategy | bool
-  - service_auditd_enabled | bool
   - low_disruption | bool
+  - package_opensc_installed | bool
   - low_complexity | bool
   tags:
-  - service_auditd_enabled
-  - high_severity
+  - package_opensc_installed
+  - medium_severity
   - enable_strategy
   - low_complexity
   - low_disruption
   - no_reboot_needed
-  - NIST-800-53-AC-2(g)
-  - NIST-800-53-AU-3
-  - NIST-800-53-AC-17(1)
-  - NIST-800-53-AU-1(b)
-  - NIST-800-53-AU-10
-  - NIST-800-53-AU-12(a)
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-14(1)
-  - NIST-800-53-IR-5
-  - NIST-800-171-3.3.1
-  - NIST-800-171-3.3.2
-  - NIST-800-171-3.3.6
-  - PCI-DSS-Req-10.1
-  - CJIS-5.4.1.1
+
+- name: Ensure pcsc-lite is installed
+  package:
+    name: pcsc-lite
+    state: present
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - enable_strategy | bool
+  - no_reboot_needed | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - package_pcsc-lite_installed
+  - medium_severity
+  - enable_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+
+- name: Enable service pcscd
+  block:
+  - name: Gather the package facts
+    package_facts:
+      manager: auto
+  - name: Enable service pcscd
+    service:
+      name: pcscd
+      enabled: 'yes'
+      state: started
+    when:
+    - '"pcsc-lite" in ansible_facts.packages'
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - medium_severity | bool
+  - service_pcscd_enabled | bool
+  - enable_strategy | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - service_pcscd_enabled
+  - medium_severity
+  - enable_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
 
 - name: Check existence of opensc conf
   stat:
@@ -13539,45 +13106,6 @@
   - NIST-800-53-IA-2(2)
   - PCI-DSS-Req-8.3
 
-- name: Ensure opensc is installed
-  package:
-    name: opensc
-    state: present
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - medium_severity | bool
-  - enable_strategy | bool
-  - low_disruption | bool
-  - package_opensc_installed | bool
-  - low_complexity | bool
-  tags:
-  - package_opensc_installed
-  - medium_severity
-  - enable_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-
-- name: Ensure pcsc-lite is installed
-  package:
-    name: pcsc-lite
-    state: present
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - enable_strategy | bool
-  - no_reboot_needed | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - package_pcsc-lite_installed
-  - medium_severity
-  - enable_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-
 - name: Check existence of pkcs11-switch
   stat:
     path: /usr/bin/pkcs11-switch
@@ -13643,108 +13171,6 @@
   - no_reboot_needed
   - NIST-800-53-IA-2(2)
   - PCI-DSS-Req-8.3
-
-- name: Enable service pcscd
-  block:
-  - name: Gather the package facts
-    package_facts:
-      manager: auto
-  - name: Enable service pcscd
-    service:
-      name: pcscd
-      enabled: 'yes'
-      state: started
-    when:
-    - '"pcsc-lite" in ansible_facts.packages'
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - no_reboot_needed | bool
-  - medium_severity | bool
-  - service_pcscd_enabled | bool
-  - enable_strategy | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - service_pcscd_enabled
-  - medium_severity
-  - enable_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-
-- name: Verify that Interactive Boot is Disabled in /etc/default/grub
-  replace:
-    dest: /etc/default/grub
-    regexp: systemd.confirm_spawn=(1|yes|true|on)
-    replace: systemd.confirm_spawn=no
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - grub2_disable_interactive_boot | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - grub2_disable_interactive_boot
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-SC-2
-  - NIST-800-53-AC-3
-  - NIST-800-171-3.1.2
-  - NIST-800-171-3.4.5
-
-- name: Verify that Interactive Boot is Disabled (runtime)
-  command: /sbin/grubby --update-kernel=ALL --remove-args="systemd.confirm_spawn"
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - grub2_disable_interactive_boot | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - grub2_disable_interactive_boot
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - reboot_required
-  - NIST-800-53-SC-2
-  - NIST-800-53-AC-3
-  - NIST-800-171-3.1.2
-  - NIST-800-171-3.4.5
-
-- name: require single user mode password
-  lineinfile:
-    create: true
-    dest: /usr/lib/systemd/system/rescue.service
-    regexp: ^#?ExecStart=
-    line: ExecStart=-/sbin/sulogin rescue
-  when:
-  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
-  - require_singleuser_auth | bool
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
-  tags:
-  - require_singleuser_auth
-  - medium_severity
-  - restrict_strategy
-  - low_complexity
-  - low_disruption
-  - no_reboot_needed
-  - NIST-800-53-IA-2
-  - NIST-800-53-IA-2(1)
-  - NIST-800-53-AC-3
-  - NIST-800-171-3.1.1
-  - NIST-800-171-3.4.5
 
 - name: Ensure PAM variable maxrepeat is set accordingly
   lineinfile:
@@ -14738,7 +14164,7 @@
   - low_disruption | bool
   - low_complexity | bool
 
-- name: Test for existence /etc/cron.allow
+- name: Test for existence of /etc/securetty
   stat:
     path: /etc/securetty
   register: securetty_empty
@@ -14762,10 +14188,17 @@
   - low_complexity | bool
 
 - name: Direct root Logins Not Allowed
-  shell: echo > /etc/securetty
-  args:
-    warn: false
-  changed_when: securetty_empty.stat.size > 1
+  copy:
+    dest: /etc/securetty
+    content: ''
+  when:
+  - securetty_empty.stat.size > 1
+  - no_direct_root_logins | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
   tags:
   - no_direct_root_logins
   - medium_severity
@@ -14777,13 +14210,6 @@
   - NIST-800-53-IA-2(1)
   - NIST-800-171-3.1.1
   - NIST-800-171-3.1.6
-  when:
-  - no_direct_root_logins | bool
-  - no_reboot_needed | bool
-  - restrict_strategy | bool
-  - medium_severity | bool
-  - low_disruption | bool
-  - low_complexity | bool
 
 - name: Restrict Virtual Console Root Logins
   lineinfile:
@@ -14883,4 +14309,867 @@
   - medium_severity | bool
   - accounts_minimum_age_login_defs | bool
   - low_disruption | bool
+  - low_complexity | bool
+
+- name: Find /etc/ssh/ file(s)
+  find:
+    paths: /etc/ssh/
+    patterns: ^.*_key$
+    use_regex: true
+  register: files_found
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - configure_strategy | bool
+  - medium_severity | bool
+  - file_permissions_sshd_private_key | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - file_permissions_sshd_private_key
+  - medium_severity
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-6
+  - NIST-800-53-AC-17
+  - NIST-800-171-3.1.13
+  - NIST-800-171-3.13.10
+
+- name: Set permissions for /etc/ssh/ file(s)
+  file:
+    path: '{{ item.path }}'
+    mode: '0640'
+  with_items:
+  - '{{ files_found.files }}'
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - configure_strategy | bool
+  - medium_severity | bool
+  - file_permissions_sshd_private_key | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - file_permissions_sshd_private_key
+  - medium_severity
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-6
+  - NIST-800-53-AC-17
+  - NIST-800-171-3.1.13
+  - NIST-800-171-3.13.10
+
+- name: Find /etc/ssh/ file(s)
+  find:
+    paths: /etc/ssh/
+    patterns: ^.*.pub$
+    use_regex: true
+  register: files_found
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - configure_strategy | bool
+  - file_permissions_sshd_pub_key | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - file_permissions_sshd_pub_key
+  - medium_severity
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-6
+  - NIST-800-171-3.1.13
+  - NIST-800-171-3.13.10
+
+- name: Set permissions for /etc/ssh/ file(s)
+  file:
+    path: '{{ item.path }}'
+    mode: '0644'
+  with_items:
+  - '{{ files_found.files }}'
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - configure_strategy | bool
+  - file_permissions_sshd_pub_key | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - file_permissions_sshd_pub_key
+  - medium_severity
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-6
+  - NIST-800-171-3.1.13
+  - NIST-800-171-3.13.10
+
+- name: Disable Compression Or Set Compression to delayed
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*Compression\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: Compression delayed
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - sshd_disable_compression | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_disable_compression
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-CM-6(b)
+  - NIST-800-171-3.1.12
+
+- name: Disable Kerberos Authentication
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*KerberosAuthentication\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: KerberosAuthentication no
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - sshd_disable_kerb_auth | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_disable_kerb_auth
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-CM-6(c)
+  - NIST-800-171-3.1.12
+
+- name: Disable SSH Root Login
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*PermitRootLogin\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: PermitRootLogin no
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - sshd_disable_root_login | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_disable_root_login
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-3
+  - NIST-800-53-AC-6(2)
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-IA-2
+  - NIST-800-53-IA-2(5)
+  - NIST-800-171-3.1.1
+  - NIST-800-171-3.1.5
+  - CJIS-5.5.6
+
+- name: Disable Host-Based Authentication
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*HostbasedAuthentication\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: HostbasedAuthentication no
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - disable_host_auth | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - disable_host_auth
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-3
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-CM-6(b)
+  - NIST-800-171-3.1.12
+  - CJIS-5.5.6
+
+- name: Set SSH Idle Timeout Interval
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*ClientAliveInterval\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: ClientAliveInterval {{ sshd_idle_timeout_value }}
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - sshd_set_idle_timeout | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_set_idle_timeout
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-2(5)
+  - NIST-800-53-SA-8(i)
+  - NIST-800-53-AC-12
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-SC-10
+  - NIST-800-171-3.1.11
+  - PCI-DSS-Req-8.1.8
+  - CJIS-5.5.6
+
+- name: Enable Use of Strict Mode Checking
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*StrictModes\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: StrictModes yes
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - sshd_enable_strictmodes | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_enable_strictmodes
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-6
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-171-3.1.12
+
+- name: Disable GSSAPI Authentication
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*GSSAPIAuthentication\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: GSSAPIAuthentication no
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - sshd_disable_gssapi_auth | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_disable_gssapi_auth
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-CM-6(c)
+  - NIST-800-171-3.1.12
+
+- name: Enable Use of Privilege Separation
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*UsePrivilegeSeparation\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: UsePrivilegeSeparation sandbox
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - sshd_use_priv_separation | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_use_priv_separation
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-6
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-171-3.1.12
+
+- name: Use Only FIPS 140-2 Validated MACs
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*MACs\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: MACs {{ sshd_approved_macs }}
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_use_approved_macs | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_use_approved_macs
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-AC-17(2)
+  - NIST-800-53-IA-7
+  - NIST-800-53-SC-13
+  - NIST-800-53-MA-4(6)
+  - NIST-800-171-3.1.13
+  - NIST-800-171-3.13.11
+  - NIST-800-171-3.13.8
+
+- name: Allow Only SSH Protocol 2
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*Protocol\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: Protocol 2
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - high_severity | bool
+  - sshd_allow_only_protocol2 | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_allow_only_protocol2
+  - high_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-AC-17(8).1(ii)
+  - NIST-800-53-IA-5(1)(c)
+  - NIST-800-171-3.1.13
+  - NIST-800-171-3.5.4
+  - CJIS-5.5.6
+
+- name: Use Only FIPS 140-2 Validated Ciphers
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*Ciphers\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - sshd_use_approved_ciphers | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_use_approved_ciphers
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-3
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-AC-17(2)
+  - NIST-800-53-AU-10(5)
+  - NIST-800-53-CM-6(b)
+  - NIST-800-53-IA-5(1)(c)
+  - NIST-800-53-IA-7
+  - NIST-800-53-SI-7
+  - NIST-800-53-SC-13
+  - NIST-800-171-3.1.13
+  - NIST-800-171-3.13.11
+  - NIST-800-171-3.13.8
+  - CJIS-5.5.6
+
+- name: Disable SSH Access via Empty Passwords
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*PermitEmptyPasswords\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: PermitEmptyPasswords no
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_disable_empty_passwords | bool
+  - high_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_disable_empty_passwords
+  - high_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-3
+  - NIST-800-53-AC-6
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-CM-6(b)
+  - NIST-800-171-3.1.1
+  - NIST-800-171-3.1.5
+  - CJIS-5.5.6
+
+- name: Do Not Allow SSH Environment Options
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*PermitUserEnvironment\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: PermitUserEnvironment yes
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - sshd_do_not_permit_user_env | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_do_not_permit_user_env
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-CM-6(b)
+  - NIST-800-171-3.1.12
+  - CJIS-5.5.6
+
+- name: Set LogLevel to INFO
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*LogLevel\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: LogLevel INFO
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - low_severity | bool
+  - sshd_set_loglevel_info | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_set_loglevel_info
+  - low_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+
+- name: Set SSH Client Alive Max Count
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*ClientAliveCountMax\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: ClientAliveCountMax {{ var_sshd_set_keepalive }}
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - sshd_set_keepalive | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_set_keepalive
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-2(5)
+  - NIST-800-53-SA-8
+  - NIST-800-53-AC-12
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-53-SC-10
+  - NIST-800-171-3.1.11
+  - CJIS-5.5.6
+
+- name: Enable SSH Print Last Log
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*PrintLastLog\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: PrintLastLog yes
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_print_last_log | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_print_last_log
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-9
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+
+- name: Enable SSH Warning Banner
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*Banner\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: Banner /etc/issue
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - sshd_enable_warning_banner | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_enable_warning_banner
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-AC-8(a)
+  - NIST-800-53-AC-8(b)
+  - NIST-800-53-AC-8(c)(1)
+  - NIST-800-53-AC-8(c)(2)
+  - NIST-800-53-AC-8(c)(3)
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-171-3.1.9
+  - CJIS-5.5.6
+
+- name: Disable SSH Support for Rhosts RSA Authentication
+  block:
+  - name: Deduplicate values from /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: false
+      regexp: (?i)^\s*RhostsRSAAuthentication\s+
+      state: absent
+  - name: Insert correct line to /etc/ssh/sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      create: true
+      line: RhostsRSAAuthentication no
+      state: present
+      insertbefore: ^[#\s]*Match
+      validate: /usr/sbin/sshd -t -f %s
+  when:
+  - ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker"
+  - sshd_disable_rhosts_rsa | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - medium_severity | bool
+  - low_disruption | bool
+  - low_complexity | bool
+  tags:
+  - sshd_disable_rhosts_rsa
+  - medium_severity
+  - restrict_strategy
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(b)
+  - NIST-800-171-3.1.12
+
+- name: Test for domain group
+  command: grep '\s*\[domain\/[^]]*]' /etc/sssd/sssd.conf
+  register: test_grep_domain
+  ignore_errors: true
+  changed_when: false
+  tags:
+  - sssd_enable_smartcards
+  - medium_severity
+  - configure_strategy
+  - low_complexity
+  - medium_disruption
+  - no_reboot_needed
+  when:
+  - no_reboot_needed | bool
+  - configure_strategy | bool
+  - medium_severity | bool
+  - medium_disruption | bool
+  - sssd_enable_smartcards | bool
+  - low_complexity | bool
+
+- name: Add default domain group (if no domain there)
+  ini_file:
+    path: /etc/sssd/sssd.conf
+    section: '{{ item.section }}'
+    option: '{{ item.option }}'
+    value: '{{ item.value }}'
+    create: true
+    mode: 384
+  with_items:
+  - section: sssd
+    option: domains
+    value: default
+  - section: domain/default
+    option: id_provider
+    value: files
+  when:
+  - test_grep_domain.stdout is defined
+  - test_grep_domain.stdout | length < 1
+  - no_reboot_needed | bool
+  - configure_strategy | bool
+  - medium_severity | bool
+  - medium_disruption | bool
+  - sssd_enable_smartcards | bool
+  - low_complexity | bool
+  tags:
+  - sssd_enable_smartcards
+  - medium_severity
+  - configure_strategy
+  - low_complexity
+  - medium_disruption
+  - no_reboot_needed
+
+- name: Enable Smartcards in SSSD
+  ini_file:
+    dest: /etc/sssd/sssd.conf
+    section: pam
+    option: pam_cert_auth
+    value: true
+    create: true
+    mode: 384
+  tags:
+  - sssd_enable_smartcards
+  - medium_severity
+  - configure_strategy
+  - low_complexity
+  - medium_disruption
+  - no_reboot_needed
+  when:
+  - no_reboot_needed | bool
+  - configure_strategy | bool
+  - medium_severity | bool
+  - medium_disruption | bool
+  - sssd_enable_smartcards | bool
   - low_complexity | bool
