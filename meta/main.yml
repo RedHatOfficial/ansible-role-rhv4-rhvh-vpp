@@ -1,5 +1,6 @@
 galaxy_info:
   role_name: rhv4_rhvh_vpp
+  namespace: redhatofficial
   author: ComplianceAsCode development team
   description: VPP - Protection Profile for Virtualization v. 1.0 for Red Hat Virtualization Host (RHVH)
   company: Red Hat, Inc.
